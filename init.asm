@@ -1,5 +1,8 @@
 BITS 64
 
+
+SECTION .text:
+
 global  init
 global  addrpn
 global  subrpn
@@ -13,8 +16,7 @@ global  mulrpn_size
 global  divrpn_size
 global  pushval_size
 global  prologue_size
-
-SECTION .text:
+global  vars_offset
 
 ; rdi - addr jmp to
 init:
@@ -55,11 +57,11 @@ divrpn:
     push    rax
 .end:
 
-
 pushval:
-    mov     rax, 0x1111111111111; 
+    mov     rcx, 0xdeadbeef; 
                             .vars:
-    push    rax
+    mov     rdi, [8*rcx + r8]
+    push    rdi
 .end:
 
 addrpn_size:
@@ -86,3 +88,7 @@ prologue_size:
     mov     rax, prologue.end - prologue
     ret
 
+vars_offset:
+    mov     rax, pushval.vars - pushval
+    sub     rax, 8
+    ret

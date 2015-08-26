@@ -9,9 +9,8 @@ typedef unsigned long long PTR;
     C_COMP PTR x()
 
 
-
 C_COMP  void init(PTR, PTR, PTR);
-C_COMP  PTR val;
+C_COMP  PTR vars_offset();
 
 JIT_LABEL(addrpn);
 JIT_LABEL(subrpn);
@@ -19,6 +18,13 @@ JIT_LABEL(mulrpn);
 JIT_LABEL(divrpn);
 JIT_LABEL(pushval);
 
+
+
+void inject_arg(PTR addrs, PTR offset, PTR arg)
+{
+    PTR* t_ptr = (PTR*)(addrs + offset);
+    *t_ptr = arg;
+}
 
 #endif // JIT_FUNCTIONS_H
 

@@ -14,9 +14,11 @@ void add(int& x, int& y)
 
 int main()
 {
+    printf("%lld\n",vars_offset());
     void* ptr = mallocx(1000*sizeof(int));
-    memcpy(ptr, reinterpret_cast<void*>(add), 34);
-
+    memcpy(ptr, reinterpret_cast<void*>(pushval), pushval_size());
+    long long* arg = (long long*)((PTR)ptr + vars_offset());
+    *arg = 7;
     int x = 2, y = 3;
 
     init((unsigned long long) &x, (unsigned long long) &y, (long long) ptr);
