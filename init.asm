@@ -1,5 +1,20 @@
 BITS 64
 
+%macro rpn_func f_name
+global %fname
+%fname:
+    pop     rbx
+    pop     rax
+    %f_name rax, rbx
+    push    rax
+.end:
+%endmacro
+
+
+%macro func_size f_name
+    mov     rax, %f_name.end - %f_name
+    ret
+%endmacro
 
 SECTION .text:
 
@@ -16,43 +31,52 @@ global  mulrpn_size
 global  divrpn_size
 global  pushval_size
 global  prologue_size
-global  vars_offset
+global  pushval_varA_offset
+global  prologue_varA_offset:
+global  prologue_varA_offset:
 
 ; rdi - addr jmp to
 init:
-    call rdx;
+    call rdi;
     ret
 
 prologue:
     mov     r8, rsp
+    mov     rsi, 0xdeadbeef
+                            .varA:
+    mov     rcx, 0xdeadbeef
+                            .varB:
+    mov     rdi, rsp
+    sub     rsp, [8*rcx]
+    rep movsd 
 .end:
 
 addrpn:
-    pop     rax
     pop     rbx
+    pop     rax
     add     rax, rbx
     push    rax
 .end:
 
 
 subrpn:
-    pop     rax
     pop     rbx
+    pop     rax
     sub     rax, rbx
     push    rax
 .end:
 
 mulrpn:
-    pop     rax
     pop     rbx
+    pop     rax
     mul     rbx
     push    rax
 .end:
 
 
 divrpn:
-    pop     rax
     pop     rbx
+    pop     rax
     div     rbx
     push    rax
 .end:
@@ -88,7 +112,21 @@ prologue_size:
     mov     rax, prologue.end - prologue
     ret
 
-vars_offset:
+epilogue_size:
+    mov     rax, epilogue.end - epilogue
+    ret
+
+prologue_varA_offset:
+    mov     rax, prologue.varA - prologue
+    sub     rax, 8
+    ret
+
+prologue_varB_offset:
+    mov     rax, prologue.varB - prologue
+    sub     rax, 8
+    ret
+
+pushval_varA_offset:
     mov     rax, pushval.vars - pushval
     sub     rax, 8
     ret

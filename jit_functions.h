@@ -9,20 +9,21 @@ typedef unsigned long long PTR;
     C_COMP PTR x()
 
 
-C_COMP  void init(PTR, PTR, PTR);
-C_COMP  PTR vars_offset();
+C_COMP  void init(PTR);
+C_COMP  PTR pushval_varA_offset();
+C_COMP  PTR prologue_varA_offset();
+C_COMP  PTR prologue_varB_offset();
 
+JIT_LABEL(prologue);
 JIT_LABEL(addrpn);
 JIT_LABEL(subrpn);
 JIT_LABEL(mulrpn);
 JIT_LABEL(divrpn);
 JIT_LABEL(pushval);
 
-
-
-void inject_arg(PTR addrs, PTR offset, PTR arg)
+void inject_arg(void* addrs, PTR offset, PTR arg)
 {
-    PTR* t_ptr = (PTR*)(addrs + offset);
+    PTR* t_ptr = (PTR*)((PTR)addrs + offset);
     *t_ptr = arg;
 }
 

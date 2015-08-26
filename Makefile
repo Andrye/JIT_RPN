@@ -1,6 +1,6 @@
 CXX ?= g++
 ASM ?= nasm
-CXXFLAGS = -Wall -O2 -g -c
+CXXFLAGS = -O2 -g -c
 ASMFLAGS = -g -O0 -felf64
 SOURCES = main.cpp init.asm
 OBJECTS_ = $(SOURCES:.cpp=.o)
