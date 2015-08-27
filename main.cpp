@@ -4,28 +4,31 @@
 #include "mallocx.h"
 
 #include "jit_functions.h"
-#include "code.h"
+#include "rpnexpr.h"
 
-extern void* mallocx(size_t);
+#define MAX_BUFF_SIZE 1024
 
-void add(int& x, int& y)
-{
-    x += y;
-}
+const int SIZE = 10;
 
 int main()
 {
-    printf("%lld\n",pushval_varA_offset());
-    void* ptr = mallocx(1000*sizeof(int));
-    memcpy(ptr, reinterpret_cast<void*>(pushval), pushval_size());
-    PTR* arg = (PTR*)((PTR)ptr + pushval_varA_offset());
-    *arg = 7;
-    int x = 2, y = 3;
+    int iterations;
+    _MUTE_UNUSED_RESULT(scanf("%d", &iterations));
 
-    init((PTR) ptr);
+    char expr[MAX_BUFF_SIZE];
+    PTR args[SIZE];
 
-    addrpn();
-    printf("x : %d\ny : %d\n", x, y);
-    puts("I am back");
-    printf("x : %d\ny : %d\n", x, y);
+    _MUTE_UNUSED_RESULT(scanf("%s", expr));
+    RPNExpr code(expr, SIZE);
+
+    while (iterations--)
+    {
+        for (int i=0;i<SIZE; ++i)
+        {
+            _MUTE_UNUSED_RESULT(scanf("%lld", &args[i]));
+        }
+        code.PassArgs(args);
+        printf("%lld\n", code());
+    }
+    return 0;
 }
