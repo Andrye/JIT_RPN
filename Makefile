@@ -2,7 +2,7 @@ CXX ?= g++
 ASM ?= nasm
 CXXFLAGS = -Wall -O2 -g -c
 ASMFLAGS = -g -O0 -felf64
-SOURCES  = main.cpp init.asm
+SOURCES  = main.cpp tools.asm
 OBJECTS_ = $(SOURCES:.cpp=.o)
 OBJECTS  = $(OBJECTS_:.asm=.o)
 
@@ -14,7 +14,7 @@ exec: $(OBJECTS)
 main.o : main.cpp
 	$(CXX) $(CXXFLAGS) $? -o $@
 
-init.o : init.asm
+%.o : %.asm
 	$(ASM) $? $(ASMFLAGS) -o $@
 
 .PHONY : clean

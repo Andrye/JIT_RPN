@@ -82,7 +82,7 @@ prologue:
     mov     rax, rcx
     shl     rax, 3
     sub     rsp, rax
-    lea     r8, [rsp+8]
+    mov     r8, rsp
     mov     rdi, r8
     rep  movsq
     push    r11

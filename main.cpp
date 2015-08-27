@@ -12,8 +12,8 @@ const int SIZE = 10;
 
 int main()
 {
-    int iterations;
-    _MUTE_UNUSED_RESULT(scanf("%d", &iterations));
+    long long iterations;
+    _MUTE_UNUSED_RESULT(scanf("%lld", &iterations));
 
     char expr[MAX_BUFF_SIZE];
     PTR args[SIZE];
