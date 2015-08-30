@@ -47,12 +47,13 @@ struct RPNExpr
 private:
     void AllocateMemory()
     {
-        ExMem = mallocx(len); 
+        ExMem = mallocx(len);
     }
 
     void GenerateCode()
     {
         len = 0;
+        bool bPushVal = false;
         APPEND_FUNC2(ExMem, prologue, ExprArgs, Argc);
         for (char* sPtr = sExpr; *sPtr; ++sPtr)
         {
@@ -64,7 +65,15 @@ private:
                 case '/': APPEND_FUNC0(ExMem, divrpn); break;
                 default:
                     int idx = *sPtr - '0';
-                    APPEND_FUNC1(ExMem, pushval, idx);
+                    if (bPushVal)
+                    {
+                        APPEND_FUNC1(ExMem, pushval, idx);
+                    }
+                    else
+                    {
+                        APPEND_FUNC1(ExMem, pushvalfirst, idx);
+                        bPushVal = true;
+                    }
             }
         }
         APPEND_FUNC0(ExMem, epilogue);
@@ -73,7 +82,7 @@ private:
     void Compile()
     {
         len = prologue_size() + epilogue_size();
-
+        bool bPushVal = false;
         for (char* sPtr = sExpr; *sPtr; ++sPtr)
         {
             switch(*sPtr)
@@ -82,7 +91,8 @@ private:
                 case '-': len += subrpn_size(); break;
                 case '*': len += mulrpn_size(); break;
                 case '/': len += divrpn_size(); break;
-                default: len += pushval_size();
+                default: len += (bPushVal ? pushval_size() : pushvalfirst_size());
+                         bPushVal = true;
             }
         }
 

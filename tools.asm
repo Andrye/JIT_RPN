@@ -6,10 +6,9 @@ BITS 64
 global %{1}rpn
 
 %{1}rpn:
-    pop     rbx
     pop     rax
     %1      rax, rbx
-    push    rax
+    mov     rbx, rax
 .end:
 func_size %1rpn
 
@@ -19,10 +18,9 @@ func_size %1rpn
 global %{1}rpn
 
 %{1}rpn:
-    pop     rbx
     pop     rax
     %1      rbx
-    push    rax
+    mov     rbx, rax
 .end:
 func_size %1rpn
 
@@ -37,7 +35,7 @@ global %{1}_size
     ret
 %endmacro
 
-;______________VAR #1 OPCODE OFFSET__________
+;______________VAR #1 OPCODE OFFSET_________
 
 %macro offset_A 1
 global %{1}_varA_offset
@@ -65,6 +63,7 @@ SECTION .text:
 
 global  init
 global  pushval
+global  pushvalfirst
 global  prologue
 global  epilogue
 
@@ -89,20 +88,31 @@ prologue:
 .end:
 
 epilogue:
-    pop     rax
+    mov     rax, rbx
     pop     rsp
     ret
 .end:
 
-pushval:
-    mov     rcx, 0xdeadbeef; 
+pushvalfirst:
+    mov     rcx, 0xdeadbeef;
                             .varA:
     mov     rdi, r8
     shl     rcx, 3
     add     rdi, rcx
-    mov     rax, [rdi]
-    push    rax
+    mov     rbx, [rdi]
 .end:
+
+pushval:
+    push    rbx
+    mov     rcx, 0xdeadbeef;
+                            .varA:
+    mov     rdi, r8
+    shl     rcx, 3
+    add     rdi, rcx
+    mov     rbx, [rdi]
+.end:
+
+;_______________UNWIND MACROS_______________
 
 rpn_funcS add
 rpn_funcS sub
@@ -111,8 +121,10 @@ rpn_funcC div
 
 func_size prologue
 func_size epilogue
+func_size pushvalfirst
 func_size pushval
 
 offset_A prologue
 offset_B prologue
+offset_A pushvalfirst
 offset_A pushval
