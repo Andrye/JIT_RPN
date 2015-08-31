@@ -16,7 +16,6 @@ struct RPNExpr
         ExprArgs()
     {
         ExprArgs = new PTR[argc];
-        Compile();
     }
 
     ~RPNExpr()
@@ -29,6 +28,27 @@ struct RPNExpr
         {
             delete[] ExprArgs;
         }
+    }
+
+    void Compile()
+    {
+        len = prologue_size() + epilogue_size();
+        bool bPushVal = false;
+        for (char* sPtr = sExpr; *sPtr; ++sPtr)
+        {
+            switch(*sPtr)
+            {
+                case '+': len += addrpn_size(); break;
+                case '-': len += subrpn_size(); break;
+                case '*': len += mulrpn_size(); break;
+                case '/': len += divrpn_size(); break;
+                default: len += (bPushVal ? pushval_size() : pushvalfirst_size());
+                         bPushVal = true;
+            }
+        }
+
+        AllocateMemory();
+        GenerateCode();
     }
 
     void PassArgs(PTR* argv)
@@ -77,27 +97,6 @@ private:
             }
         }
         APPEND_FUNC0(ExMem, epilogue);
-    }
-
-    void Compile()
-    {
-        len = prologue_size() + epilogue_size();
-        bool bPushVal = false;
-        for (char* sPtr = sExpr; *sPtr; ++sPtr)
-        {
-            switch(*sPtr)
-            {
-                case '+': len += addrpn_size(); break;
-                case '-': len += subrpn_size(); break;
-                case '*': len += mulrpn_size(); break;
-                case '/': len += divrpn_size(); break;
-                default: len += (bPushVal ? pushval_size() : pushvalfirst_size());
-                         bPushVal = true;
-            }
-        }
-
-        AllocateMemory();
-        GenerateCode();
     }
 
     char*       sExpr;

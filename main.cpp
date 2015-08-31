@@ -20,10 +20,11 @@ int main()
 
     _MUTE_UNUSED_RESULT(scanf("%s", expr));
     RPNExpr code(expr, SIZE);
+    code.Compile();
 
     while (iterations--)
     {
-        for (int i=0;i<SIZE; ++i)
+        for (int i = 0; i < SIZE; ++i)
         {
             _MUTE_UNUSED_RESULT(scanf("%lld", &args[i]));
         }
